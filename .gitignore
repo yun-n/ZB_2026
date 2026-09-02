@@ -1,0 +1,18 @@
+# Gradle
+.gradle/
+api/build/
+!api/gradle/wrapper/gradle-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+
+# Env
+.env
+
+# MySQL data volume (docker-compose 볼륨이라 별도 무시 불필요하지만 로컬 백업 파일 대비)
+*.sql.bak
