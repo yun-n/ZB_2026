@@ -3,6 +3,9 @@
 api/build/
 !api/gradle/wrapper/gradle-wrapper.jar
 
+# README (임시로 제외 - 나중에 다시 추가 예정)
+README.md
+
 # IDE
 .idea/
 *.iml
