@@ -36,6 +36,13 @@ public class PostController {
         // Filter의 IN/OUT, Interceptor의 PRE/POST 사이에서 Controller가 실제로 언제 실행되는지
         // 로그로 명확히 보여주기 위한 것. (0주차 MVC 과제 - 실행 순서 관찰용)
         log.info("[CONTROLLER] IN  - status={}, page={}, size={}", status, page, size);
+
+        // 0주차 MVC 과제 2번: @RestControllerAdvice가 Controller 예외를 어떻게 처리하는지
+        // 재현하기 위한 의도적인 테스트 분기. status=ERROR로 호출하면 예외가 발생한다.
+        if ("ERROR".equals(status)) {
+            throw new IllegalStateException("의도적으로 발생시킨 Controller 예외");
+        }
+
         Page<Post> result = postRepository.findByStatusOrderByCreatedAtDescIdDesc(status, PageRequest.of(page, size));
         log.info("[CONTROLLER] OUT - totalElements={}", result.getTotalElements());
         return result;
