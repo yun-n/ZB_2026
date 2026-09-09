@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>CORS 테스트 클라이언트</title>
+</head>
+<body>
+    <h1>CORS 재현용 테스트 페이지</h1>
+    <p>현재 페이지 출처(origin): <b id="origin"></b></p>
+
+    <button onclick="callFeedApi()">GET /api/posts/feed 호출</button>
+
+    <pre id="result" style="background:#f0f0f0; padding:1em; margin-top:1em;"></pre>
+
+    <script>
+        document.getElementById('origin').textContent = window.location.origin;
+
+        async function callFeedApi() {
+            const resultEl = document.getElementById('result');
+            resultEl.textContent = '요청 보내는 중...';
+
+            try {
+                // Content-Type을 명시적으로 넣은 이유:
+                // GET + 기본 헤더만 쓰면 "단순 요청"으로 분류되어 preflight(OPTIONS)가 아예 안 뜬다.
+                // Content-Type: application/json을 붙이면 "복잡한 요청"으로 분류되어
+                // 브라우저가 실제 요청 전에 OPTIONS를 먼저 보낸다 (Network 탭에서 확인 가능).
+                const response = await fetch('http://localhost:8080/api/posts/feed', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const data = await response.json();
+                resultEl.textContent = '성공!\n\nstatus: ' + response.status + '\n\n' + JSON.stringify(data, null, 2).slice(0, 500);
+            } catch (err) {
+                // CORS에 막히면 fetch 자체가 reject되고, 이 catch로 온다.
+                // 브라우저 콘솔에는 별도로 "has been blocked by CORS policy" 에러가 찍힌다
+                // (여기 화면에는 자세한 이유가 안 나오는 게 보안상 의도된 동작).
+                resultEl.textContent = '실패! (개발자도구 콘솔의 에러 메시지를 확인하세요)\n\n' + err;
+            }
+        }
+    </script>
+</body>
+</html>
