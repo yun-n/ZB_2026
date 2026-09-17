@@ -1,5 +1,6 @@
 package com.zb.blogapi.post;
 
+import com.zb.blogapi.user.User;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -14,6 +15,14 @@ public class Post {
     // 의도적으로 FK 제약을 걸지 않음 (0주차 베이스라인에서 InnoDB 자동 인덱스 생성을 막기 위함)
     @Column(name = "user_id", nullable = false)
     private Long userId;
+
+    // 2주차 N+1 실험용 연관관계.
+    // insertable/updatable = false로 해서 쓰기는 여전히 user_id 컬럼(위 필드)으로 하고,
+    // 읽기 전용으로만 User를 지연 로딩(LAZY)한다. FK 제약은 걸지 않았으므로 DB 레벨
+    // 인덱스 베이스라인에는 영향 없다.
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
+    private User author;
 
     @Column(nullable = false, length = 20)
     private String status; // PUBLISHED, DRAFT 등 — Enum은 1주차 이후 리팩터링
@@ -43,6 +52,10 @@ public class Post {
 
     public Long getUserId() {
         return userId;
+    }
+
+    public User getAuthor() {
+        return author;
     }
 
     public String getStatus() {

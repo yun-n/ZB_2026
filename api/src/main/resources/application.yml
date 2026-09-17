@@ -10,6 +10,7 @@ spring:
       # 스키마는 Flyway가 관리한다. Hibernate는 검증만 한다.
       ddl-auto: validate
     open-in-view: false
+    show-sql: true
     properties:
       hibernate:
         format_sql: true
@@ -22,3 +23,8 @@ management:
     web:
       exposure:
         include: health,info
+
+logging:
+  level:
+    # 2주차 N+1 실험 - SQL 템플릿(?)뿐 아니라 실제 바인딩된 값도 로그로 보고 싶을 때 켠다.
+    org.hibernate.orm.jdbc.bind: TRACE
